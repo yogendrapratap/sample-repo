@@ -1,0 +1,43 @@
+name: Java-Needs-Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  checkout: # Step 1: Checkout the code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+  Setup:   # Step 2: Set up Java
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.14.1
+        with:
+          java-version: 17
+          distribution: 'microsoft'
+          cache: 'maven'
+  Build: # Step 3: Build the project
+    runs-on: ubuntu-latest
+    needs: [checkout, Setup]
+    steps:
+      - name: Build with Maven
+        run: mvn clean install
+  Test: # Step 4: Run tests
+    runs-on: ubuntu-latest
+    needs: [checkout, Setup, Build]
+    steps:
+      - name: Run Tests
+        run: mvn test
+  Package: # Step 5: Package the application
+    runs-on: ubuntu-latest
+    needs: [checkout, Setup, Build, Test]
+    steps:
+      - name: Package Application
+        run: mvn package
+
+
+
+
