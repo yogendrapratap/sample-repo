@@ -1,0 +1,38 @@
+name: Java-Martix-Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+            java-version:
+              - 17
+              - 21
+            distribution:
+              - microsoft
+              - zulu
+              - temurin
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+        # Step 2: Set up Java
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.14.1
+        with:
+          java-version: 17
+          distribution: 'microsoft'
+          cache: 'maven'
+        # Step 3: Build the project
+      - name: Build with Maven
+        run: mvn clean install
+        # Step 4: Run tests
+      - name: Run Tests
+        run: mvn test
+        # Step 5: Package the application
+      - name: Package Application
+        run: mvn package
