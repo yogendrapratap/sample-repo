@@ -17,6 +17,7 @@ jobs:
           echo "MY_VAR from env: $MY_VAR"
           echo "MY_VAR from job: ${{ env.MY_VAR }}"
           echo "MY_VAR from step: ${{ steps.variables.outputs.MY_VAR }}"
+          echo "MY_VAR from Repository Eniroment variable: ${{ vars.MY_VAR }}"
         env:
           MY_VAR: step_value
 
