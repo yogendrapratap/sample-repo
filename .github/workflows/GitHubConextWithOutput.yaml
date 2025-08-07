@@ -36,7 +36,6 @@ jobs:
           echo "Workflow Job ID: ${{ github.job }}"
           echo "Workflow Job URL: ${{ github.job_url }}"
           echo "Workflow Job Status: ${{ github.job_status }}"
-          echo "Selected Java version is : ${{ steps.set-java.outputs.java_version }}
       # Step 2: Check out the code
       - name: Checkout code
         uses: actions/checkout@v4
