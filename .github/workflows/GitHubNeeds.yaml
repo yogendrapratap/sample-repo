@@ -10,22 +10,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-  Setup:   # Step 2: Set up Java (Just to demonstrate "needs", but not needed alone)
+  Setup: # Step 2: Set up Java (Just to demonstrate "needs", but not needed alone)
     runs-on: ubuntu-latest
     needs: checkout
     steps:
+      - name: Checkout code
+        run: echo "This step is not strictly necessary, but demonstrates the use of 'needs'."
+      - uses: actions/checkout@v4  # Also needed here for independent job
+
       - name: Setup Java JDK
         uses: actions/setup-java@v3.14.1
         with:
           java-version: 17
           distribution: 'microsoft'
           cache: 'maven'
-      - name: Checkout code
-        uses: actions/checkout@v4  # Also needed here for independent job
 
   Build: # Step 3: Build the project
     runs-on: ubuntu-latest
-    needs: [checkout, Setup]
+    needs: [ checkout, Setup ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
