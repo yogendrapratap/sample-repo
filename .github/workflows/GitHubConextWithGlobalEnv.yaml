@@ -1,0 +1,22 @@
+name: GitHub-Context-With-Env-Workflow
+
+on:
+  workflow_dispatch:
+env:
+  MY_VAR: workflow_value
+jobs:
+  variables:
+    env:
+      MY_VAR: job_value
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Show the context
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "MY_VAR from env: $MY_VAR"
+          echo "MY_VAR from job: ${{ env.MY_VAR }}"
+          echo "MY_VAR from step: ${{ steps.variables.outputs.MY_VAR }}"
+        env:
+          MY_VAR: step_value
+
