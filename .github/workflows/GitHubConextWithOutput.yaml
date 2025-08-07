@@ -1,0 +1,58 @@
+name: GitHub-Context-Workflow
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 0: Set Java version based on event
+      - name: Set Java version
+        id: set-java
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "java_version=17" >> $GITHUB_OUTPUT
+          else
+            echo "java_version=21" >> $GITHUB_OUTPUT
+          fi
+        # Step 1: Show GitHub context details
+      - name: Show GitHub context details before code checkout
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Repository Id: ${{ github.repository_id }}"
+          echo "Repository URL: ${{ github.repositoryUrl}}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Run Number: ${{ github.run_number }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "Secrets: ${{ secrets.GITHUB_TOKEN }}"
+          echo "Workflow Run Attempt: ${{ github.run_attempt }}"
+          echo "Workflow Run URL: ${{ github.run_url }}"
+          echo "Workflow Job ID: ${{ github.job }}"
+          echo "Workflow Job URL: ${{ github.job_url }}"
+          echo "Workflow Job Status: ${{ github.job_status }}"
+          echo "Selected Java version is : ${{ steps.set-java.outputs.java_version }}
+      # Step 2: Check out the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        # Step 3: Set up Java
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.14.1
+        with:
+          java-version: ${{ steps.set-java.outputs.java_version }}
+          distribution: 'microsoft'
+          cache: 'maven'
+        # Step 4: Build the project
+      - name: Build with Maven
+        run: mvn clean install
+        # Step 5: Run tests
+      - name: Run Tests
+        run: mvn test
+        # Step 6: Package the application
+      - name: Package Application
+        run: mvn package
