@@ -38,23 +38,3 @@ jobs:
           tar -xvzf apache-tomcat-11.0.9.tar.gz
           mv apache-tomcat-11.0.9 tomcat
           chmod +x tomcat/bin/*.sh
-
-      # Step 7: Deploy WAR to Tomcat
-      - name: Deploy WAR
-        run: |
-          cp target/*.war tomcat/webapps/
-
-      # Step 8: Start Tomcat
-      - name: Start Tomcat
-        run: |
-          nohup tomcat/bin/startup.sh &
-          sleep 10
-
-      # Step 9: Verify deployment (optional)
-      - name: Verify Deployment
-        run: curl -I http://localhost:8080/sample/hello || echo "Deployment failed or not accessible"
-
-      # Step 10: Stop Tomcat (optional cleanup)
-      - name: Stop Tomcat
-        if: always()
-        run: tomcat/bin/shutdown.sh
