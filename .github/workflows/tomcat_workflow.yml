@@ -34,7 +34,7 @@ jobs:
       # Step 6: Download and extract Tomcat
       - name: Install Tomcat
         run: |
-          curl -O https://downloads.apache.org/tomcat/tomcat-10/v10.1.16/bin/apache-tomcat-10.1.16.tar.gz
+          curl -O https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.108/bin/apache-tomcat-9.0.108.tar.gz
           tar -xvzf apache-tomcat-10.1.16.tar.gz
           mv apache-tomcat-10.1.16 tomcat
           chmod +x tomcat/bin/*.sh
