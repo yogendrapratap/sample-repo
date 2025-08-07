@@ -1,4 +1,4 @@
-name: GitHub-Context-Workflow
+name: GitHub-Context-With-ENV-Workflow
 
 on:
   workflow_dispatch:
