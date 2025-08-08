@@ -1,9 +1,15 @@
 name: CI-Maven-Project-Workflow
 on:
   workflow_dispatch:
+    inputs:
+      TARGET_ENVIRONMENT:
+        type: environment
+        default: dev
+        description: 'Select the target environment for deployment'
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.TARGET_ENVIRONMENT }}
     steps:
       - name: Checkout Repository Code
         uses: actions/checkout@v4
