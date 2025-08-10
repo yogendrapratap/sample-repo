@@ -11,10 +11,10 @@ jobs:
     runs-on: [self-hosted, Windows, X64, gpu, yogendra-vm1-host]
     environment: ${{ inputs.TARGET_ENVIRONMENT }}
     steps:
-      - name: Setup Maven
-        uses: s4u/setup-maven-action@v1
-        with:
-          maven-version: '3.9.6'
+      - name: Install Maven (if not present)
+        run: |
+          choco install maven -y
+          refreshenv
       - name: Checkout Repository Code
         uses: actions/checkout@v4
       - name: Setup Java JDK
