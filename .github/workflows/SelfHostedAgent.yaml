@@ -15,7 +15,7 @@ jobs:
       - name: Install Java (JDK 17)
         shell: pwsh
         run: |
-          $jdkUrl = "https://download.oracle.com/java/17/latest/jdk-17_windows-x64_bin.zip"
+          $jdkUrl = "https://download.oracle.com/java/17/archive/jdk-17.0.12_windows-x64_bin.zip"
           $jdkZip = "$env:TEMP\jdk.zip"
           Invoke-WebRequest -Uri $jdkUrl -OutFile $jdkZip
           Expand-Archive -Path $jdkZip -DestinationPath "C:\Java" -Force
