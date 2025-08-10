@@ -27,7 +27,7 @@ jobs:
       - name: Install Maven
         shell: pwsh
         run: |
-          $mavenUrl = "https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip"
+          $mavenUrl = "https://download.oracle.com/java/17/archive/jdk-17.0.12_windows-x64_bin.zip"
           $mavenZip = "$env:TEMP\maven.zip"
           Invoke-WebRequest -Uri $mavenUrl -OutFile $mavenZip
           Expand-Archive -Path $mavenZip -DestinationPath "C:\Maven" -Force
