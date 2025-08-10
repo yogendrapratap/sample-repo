@@ -6,44 +6,51 @@ on:
         type: environment
         default: dev
         description: 'Select the target environment for deployment'
+
 jobs:
   build:
     runs-on: [self-hosted, Windows, X64, gpu, yogendra-vm1-host]
     environment: ${{ inputs.TARGET_ENVIRONMENT }}
     steps:
-      - name: Install Java
+      - name: Install Java (JDK 17)
+        shell: pwsh
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y wget tar
-          wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz -O jdk.tar.gz
-          sudo mkdir -p /opt/java
-          sudo tar -xzf jdk.tar.gz -C /opt/java
-          export JAVA_HOME=$(ls -d /opt/java/jdk-17* | head -n 1)
-          echo "export JAVA_HOME=$JAVA_HOME" | sudo tee -a /etc/profile
-          echo "export PATH=\$JAVA_HOME/bin:\$PATH" | sudo tee -a /etc/profile
-          source /etc/profile
+          $jdkUrl = "https://download.oracle.com/java/17/latest/jdk-17_windows-x64_bin.zip"
+          $jdkZip = "$env:TEMP\jdk.zip"
+          Invoke-WebRequest -Uri $jdkUrl -OutFile $jdkZip
+          Expand-Archive -Path $jdkZip -DestinationPath "C:\Java" -Force
+          $jdkPath = Get-ChildItem "C:\Java" | Where-Object { $_.PSIsContainer } | Select-Object -First 1 -ExpandProperty FullName
+          [System.Environment]::SetEnvironmentVariable("JAVA_HOME", $jdkPath, "Machine")
+          [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";" + "$jdkPath\bin", "Machine")
           java -version
 
       - name: Install Maven
+        shell: pwsh
         run: |
-          wget https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz -O maven.tar.gz
-          sudo mkdir -p /opt/maven
-          sudo tar -xzf maven.tar.gz -C /opt/maven --strip-components=1
-          echo "export M2_HOME=/opt/maven" | sudo tee -a /etc/profile
-          echo "export PATH=\$M2_HOME/bin:\$PATH" | sudo tee -a /etc/profile
-          source /etc/profile
+          $mavenUrl = "https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip"
+          $mavenZip = "$env:TEMP\maven.zip"
+          Invoke-WebRequest -Uri $mavenUrl -OutFile $mavenZip
+          Expand-Archive -Path $mavenZip -DestinationPath "C:\Maven" -Force
+          $mavenPath = Get-ChildItem "C:\Maven" | Where-Object { $_.PSIsContainer } | Select-Object -First 1 -ExpandProperty FullName
+          [System.Environment]::SetEnvironmentVariable("M2_HOME", $mavenPath, "Machine")
+          [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";" + "$mavenPath\bin", "Machine")
           mvn -version
 
       - name: Checkout Repository Code
         uses: actions/checkout@v4
+
       - name: Build with Maven
+        shell: pwsh
         run: mvn --batch-mode --update-snapshots verify
-      - name: Copy JAR from target to custom directory staging
-        run: mkdir staging && cp target/*.jar staging
-      - name: Upload a Build Artifacts
+
+      - name: Copy JAR from target to custom staging directory
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path staging -Force | Out-Null
+          Copy-Item "target\*.jar" staging\
+
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4.6.2
         with:
           name: Package
           path: staging
-
-
