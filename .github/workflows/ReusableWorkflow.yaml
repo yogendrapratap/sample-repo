@@ -2,11 +2,11 @@ name: ReusableWorkflow
 on:
   workflow_call:
 
-  jobs:
-    build:
-      runs-one: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-        - name: Run usable workflow
-          run: echo 'This is a usable workflow step'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run usable workflow
+        run: echo 'This is a usable workflow step'
