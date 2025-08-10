@@ -11,17 +11,31 @@ jobs:
     runs-on: [self-hosted, Windows, X64, gpu, yogendra-vm1-host]
     environment: ${{ inputs.TARGET_ENVIRONMENT }}
     steps:
-      - name: Install Maven (if not present)
+      - name: Install Java
         run: |
-          choco install maven -y
-          refreshenv
+          sudo apt-get update -y
+          sudo apt-get install -y wget tar
+          wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz -O jdk.tar.gz
+          sudo mkdir -p /opt/java
+          sudo tar -xzf jdk.tar.gz -C /opt/java
+          export JAVA_HOME=$(ls -d /opt/java/jdk-17* | head -n 1)
+          echo "export JAVA_HOME=$JAVA_HOME" | sudo tee -a /etc/profile
+          echo "export PATH=\$JAVA_HOME/bin:\$PATH" | sudo tee -a /etc/profile
+          source /etc/profile
+          java -version
+
+      - name: Install Maven
+        run: |
+          wget https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz -O maven.tar.gz
+          sudo mkdir -p /opt/maven
+          sudo tar -xzf maven.tar.gz -C /opt/maven --strip-components=1
+          echo "export M2_HOME=/opt/maven" | sudo tee -a /etc/profile
+          echo "export PATH=\$M2_HOME/bin:\$PATH" | sudo tee -a /etc/profile
+          source /etc/profile
+          mvn -version
+
       - name: Checkout Repository Code
         uses: actions/checkout@v4
-      - name: Setup Java JDK
-        uses: actions/setup-java@v3.14.1
-        with:
-          java-version: 17
-          distribution: 'microsoft'
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots verify
       - name: Copy JAR from target to custom directory staging
