@@ -21,9 +21,9 @@ jobs:
           Invoke-WebRequest -Uri $jdkUrl -OutFile $jdkZip
           Expand-Archive -Path $jdkZip -DestinationPath "C:\Java" -Force
           $jdkPath = Get-ChildItem "C:\Java" | Where-Object { $_.PSIsContainer } | Select-Object -First 1 -ExpandProperty FullName
-          [System.Environment]::SetEnvironmentVariable("JAVA_HOME", $jdkPath, "Machine")
-          [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";" + "$jdkPath\bin", "Machine")
-          java -version
+          echo "JAVA_HOME=$jdkPath" >> $env:GITHUB_ENV
+          echo "PATH=$jdkPath\bin;$env:PATH" >> $env:GITHUB_ENV
+          & "$jdkPath\bin\java.exe" -version
 
       - name: Install Maven
         shell: powershell
@@ -33,9 +33,9 @@ jobs:
           Invoke-WebRequest -Uri $mavenUrl -OutFile $mavenZip
           Expand-Archive -Path $mavenZip -DestinationPath "C:\Maven" -Force
           $mavenPath = Get-ChildItem "C:\Maven" | Where-Object { $_.PSIsContainer } | Select-Object -First 1 -ExpandProperty FullName
-          [System.Environment]::SetEnvironmentVariable("M2_HOME", $mavenPath, "Machine")
-          [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";" + "$mavenPath\bin", "Machine")
-          mvn -version
+          echo "M2_HOME=$mavenPath" >> $env:GITHUB_ENV
+          echo "PATH=$mavenPath\bin;$env:PATH" >> $env:GITHUB_ENV
+          & "$mavenPath\bin\mvn.cmd" -version
 
       - name: Checkout Repository Code
         uses: actions/checkout@v4
