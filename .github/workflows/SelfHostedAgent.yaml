@@ -20,8 +20,14 @@ jobs:
         with:
           java-version: 17
           distribution: 'microsoft'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: 3.9.9  # latest stable
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots verify
+      #- name: Build with Maven
+       # run: mvn --batch-mode --update-snapshots verify
       - name: Copy JAR from target to custom directory staging
         run: mkdir staging && cp target/*.jar staging
       - name: Upload a Build Artifacts
