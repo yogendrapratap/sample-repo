@@ -28,8 +28,10 @@ jobs:
         run: mvn --batch-mode --update-snapshots verify
       #- name: Build with Maven
        # run: mvn --batch-mode --update-snapshots verify
+      - name: Create custom directory staging
+        run: mkdir staging
       - name: Copy JAR from target to custom directory staging
-        run: mkdir staging && cp target/*.jar staging
+        run:  cp target/*.jar staging
       - name: Upload a Build Artifacts
         uses: actions/upload-artifact@v4.6.2
         with:
