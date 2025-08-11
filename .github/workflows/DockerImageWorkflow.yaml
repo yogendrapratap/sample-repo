@@ -1,0 +1,25 @@
+name: Docker Image SelfHosted Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      TARGET_ENVIRONMENT:
+        type: environment
+        default: dev
+        description: 'Select the target environment for deployment'
+
+jobs:
+  build:
+    runs-on: [self-hosted, Windows, X64, gpu, yogendra-vm1-host]
+    environment: ${{ inputs.TARGET_ENVIRONMENT }}
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Pull Image
+        run: docker pull yogendrapratap/sample-app-image:1.1
+
+      - name: Run Image
+        run: docker run --rm yogendrapratap/sample-app-image:1.1 java -version
