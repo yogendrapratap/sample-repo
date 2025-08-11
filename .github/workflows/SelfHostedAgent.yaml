@@ -13,44 +13,18 @@ jobs:
     runs-on: [self-hosted, Windows, X64, gpu, yogendra-vm1-host]
     environment: ${{ inputs.TARGET_ENVIRONMENT }}
     steps:
-      - name: Install Java (JDK 17)
-        shell: powershell
-        run: |
-          $jdkUrl = "https://download.oracle.com/java/17/archive/jdk-17.0.12_windows-x64_bin.zip"
-          $jdkZip = "$env:TEMP\jdk.zip"
-          Invoke-WebRequest -Uri $jdkUrl -OutFile $jdkZip
-          Expand-Archive -Path $jdkZip -DestinationPath "C:\Java" -Force
-          $jdkPath = Get-ChildItem "C:\Java" | Where-Object { $_.PSIsContainer } | Select-Object -First 1 -ExpandProperty FullName
-          echo "JAVA_HOME=$jdkPath" >> $env:GITHUB_ENV
-          echo "PATH=$jdkPath\bin;$env:PATH" >> $env:GITHUB_ENV
-          & "$jdkPath\bin\java.exe" -version
-
-      - name: Install Maven
-        shell: powershell
-        run: |
-          $mavenUrl = "https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip"
-          $mavenZip = "$env:TEMP\maven.zip"
-          Invoke-WebRequest -Uri $mavenUrl -OutFile $mavenZip
-          Expand-Archive -Path $mavenZip -DestinationPath "C:\Maven" -Force
-          $mavenPath = Get-ChildItem "C:\Maven" | Where-Object { $_.PSIsContainer } | Select-Object -First 1 -ExpandProperty FullName
-          echo "M2_HOME=$mavenPath" >> $env:GITHUB_ENV
-          echo "PATH=$mavenPath\bin;$env:PATH" >> $env:GITHUB_ENV
-          & "$mavenPath\bin\mvn.cmd" -version
-
       - name: Checkout Repository Code
         uses: actions/checkout@v4
-
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.14.1
+        with:
+          java-version: 17
+          distribution: 'microsoft'
       - name: Build with Maven
-        shell: powershell
         run: mvn --batch-mode --update-snapshots verify
-
-      - name: Copy JAR from target to custom staging directory
-        shell: powershell
-        run: |
-          New-Item -ItemType Directory -Path staging -Force | Out-Null
-          Copy-Item "target\*.jar" staging\
-
-      - name: Upload Build Artifact
+      - name: Copy JAR from target to custom directory staging
+        run: mkdir staging && cp target/*.jar staging
+      - name: Upload a Build Artifacts
         uses: actions/upload-artifact@v4.6.2
         with:
           name: Package
