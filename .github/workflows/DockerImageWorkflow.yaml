@@ -22,4 +22,4 @@ jobs:
         run: docker pull yogendrapratap/sample-app-image:1.1
 
       - name: Run Image
-        run: docker run --rm yogendrapratap/sample-app-image:1.1 java -version
+        run: docker run -d -p 5007:8080 yogendrapratap/sample-app-image:1.1
