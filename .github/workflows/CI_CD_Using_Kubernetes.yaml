@@ -16,7 +16,7 @@ jobs:
       postgres:
         image: postgres:14
         ports:
-          - 5435:5432
+          - 5432:5432
         env:
           POSTGRES_DB: jdbc:postgresql://postgres:5432/ecommerce-api
           POSTGRES_USER: ecommerce
