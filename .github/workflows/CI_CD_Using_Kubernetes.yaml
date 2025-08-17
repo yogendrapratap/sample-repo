@@ -53,10 +53,9 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Configure Kubeconfig   # <--- SUGGESTED FIX: Ensure kubeconfig is present
+      - name: Test kubectl connection
         run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+          echo kubectl cluster-info
 
       - name: Deploy to Kubernetes
         run: |
