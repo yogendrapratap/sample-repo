@@ -1,4 +1,4 @@
-name: CI DC Using Kubernetes for Sample App
+name: CI CD Using Kubernetes for Sample App
 
 on:
   workflow_dispatch:
