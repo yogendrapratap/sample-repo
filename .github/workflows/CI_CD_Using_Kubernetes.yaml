@@ -18,7 +18,7 @@ jobs:
         ports:
           - 5435:5432
         env:
-          POSTGRES_DB: jdbc:postgresql://db:5432/ecommerce-api
+          POSTGRES_DB: jdbc:postgresql://postgres:5432/ecommerce-api
           POSTGRES_USER: ecommerce
           POSTGRES_PASSWORD: ecommerce
         options: >-
