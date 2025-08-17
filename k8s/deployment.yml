@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-app-image
+  labels:
+    app: sample-app-image
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+          app: sample-app-image
+    template:
+        metadata:
+          labels:
+            app: sample-app-image
+        spec:
+          containers:
+            - name: sample-app-container
+              image: yogendrapratap/sample-app-image:1.1
+              ports:
+                - containerPort: 8080
+              env:
+                  - name: SPRING_DATASOURCE_URL
+                    value: jdbc:postgresql://db:5432/ecommerce-api
+                  - name: SPRING_DATASOURCE_USERNAME
+                    value: ecommerce
+                  - name: SPRING_DATASOURCE_PASSWORD
+                    value: ecommerce
